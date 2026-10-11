@@ -1,0 +1,25 @@
+source_id,village,district,lat,lon,source_type,synthetic
+DEMO-SRC-001,Demo Village 01,AURANGABAD,24.88200,84.22400,hand_pump,true
+DEMO-SRC-002,Demo Village 02,ARARIA,26.06200,87.25100,borewell,true
+DEMO-SRC-003,Demo Village 03,BHOJPUR,25.42400,84.53200,public_tap,true
+DEMO-SRC-004,Demo Village 04,BETTIAH,26.83000,84.37500,hand_pump,true
+DEMO-SRC-005,Demo Village 05,BHAGALPUR,25.24600,86.97200,borewell,true
+DEMO-SRC-006,Demo Village 06,CHAPRA,25.72800,84.96100,public_tap,true
+DEMO-SRC-007,Demo Village 07,DARBHANGA,26.07800,86.32700,hand_pump,true
+DEMO-SRC-008,Demo Village 08,GOPALGANJ,26.24600,84.79400,borewell,true
+DEMO-SRC-009,Demo Village 09,KATIHAR,25.57000,87.79900,public_tap,true
+DEMO-SRC-010,Demo Village 10,KISHANGANJ,26.25400,87.85800,hand_pump,true
+DEMO-SRC-011,Demo Village 11,MUZAFFARPUR,26.33200,85.59500,borewell,true
+DEMO-SRC-012,Demo Village 12,MADHUBANI,26.42200,85.85800,public_tap,true
+DEMO-SRC-013,Demo Village 13,MOTIHARI,26.87400,85.04900,hand_pump,true
+DEMO-SRC-014,Demo Village 14,MOTIHARI,26.48000,84.84700,borewell,true
+DEMO-SRC-015,Demo Village 15,MADHEPURA,25.93600,86.77600,public_tap,true
+DEMO-SRC-016,Demo Village 16,PATNA,25.34800,85.15100,hand_pump,true
+DEMO-SRC-017,Demo Village 17,PURNIA,25.95800,87.55800,borewell,true
+DEMO-SRC-018,Demo Village 18,ROHTAS,24.60600,83.92500,public_tap,true
+DEMO-SRC-019,Demo Village 19,SITAMARHI,26.66000,85.56200,hand_pump,true
+DEMO-SRC-020,Demo Village 20,SAMASTIPUR,25.97400,85.68900,borewell,true
+DEMO-SRC-021,Demo Village 21,SIWAN,25.75200,86.19300,public_tap,true
+DEMO-SRC-022,Demo Village 22,SAHARSA,25.68200,86.72400,hand_pump,true
+DEMO-SRC-023,Demo Village 23,VAISHALI,25.68400,85.47100,borewell,true
+DEMO-SRC-024,Demo Village 24,PATNA,25.57651,84.87708,public_tap,true

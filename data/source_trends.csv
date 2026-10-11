@@ -1,0 +1,25 @@
+source_id,weighted_slope,significance,nearest_station_km,nearest_station_id,measurement_status,synthetic,matching_method
+DEMO-SRC-001,0.168815,false,1.943,Bihar GW:BHGW-0001,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-002,0.248871,true,2.899,Bihar GW:BHGW-0027,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-003,0.161379,false,3.877,Bihar GW:BHGW-0046,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-004,0.286977,true,4.815,Bihar GW:BHGW-0064,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-005,0.188543,false,4.216,Bihar GW:BHGW-0076,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-006,-0.120343,false,5.086,Bihar GW:BHGW-0123,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-007,0.203027,false,2.120,Bihar GW:BHGW-0142,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-008,-0.124757,false,3.012,Bihar GW:BHGW-0160,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-009,0.041463,false,3.945,Bihar GW:BHGW-0225,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-010,0.176020,false,2.871,Bihar GW:BHGW-0241,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-011,0.116826,false,3.735,Bihar GW:BHGW-0263,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-012,0.150121,false,4.636,Bihar GW:BHGW-0280,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-013,-0.304094,true,5.545,Bihar GW:BHGW-0301,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-014,-0.523497,true,2.330,Bihar GW:BHGW-0154,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-015,-0.066964,false,1.551,Bihar GW:BHGW-0341,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-016,0.118166,false,2.497,Bihar GW:BHGW-0387,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-017,0.283720,false,3.441,Bihar GW:BHGW-0409,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-018,-1.214123,true,4.432,Bihar GW:BHGW-0426,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-019,0.109974,false,5.343,Bihar GW:BHGW-0445,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-020,-0.203374,true,4.943,Bihar GW:BHGW-0465,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-021,0.711797,true,1.507,Bihar GW:BHGW-0459,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-022,-0.136361,true,2.444,Bihar GW:BHGW-0508,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-023,-0.005586,false,3.399,Bihar GW:BHGW-0527,unverified,true,inverse_distance_weighted_3_nearest
+DEMO-SRC-024,-0.558107,true,1.968,Bihar GW:BHGW-0382,unverified,true,inverse_distance_weighted_3_nearest
