@@ -17,7 +17,10 @@ export const formatSourceName = (sourceOrName) => {
       ? (sourceOrName.village || sourceOrName.id || dash)
       : sourceOrName;
   if (!name || name === dash) return dash;
-  return String(name).replace(/\bDemo\s+/gi, '').trim();
+  return String(name)
+    .replace(/\bDemo Village\b/gi, 'Sample Source')
+    .replace(/\bDemo Source\b/gi, 'Sample Source')
+    .replace(/\bDemo\s+/gi, 'Sample ');
 };
 
 export const fmtSourceName = formatSourceName;

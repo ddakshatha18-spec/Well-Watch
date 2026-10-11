@@ -73,19 +73,47 @@ export default function SourceDetail({ summary, state, lang, onRetry, onReport, 
           <p className="eyebrow">
             {districtName(src.district)} · <span className="mono">{src.id}</span>
           </p>
-          <h2>{formatSourceName(src.village ?? src.id)}</h2>
+          <div className="detail-title-row">
+            <h2>{formatSourceName(src.village ?? src.id)}</h2>
+          </div>
         </div>
         <LevelBadge level={src.level} score={src.score} />
       </header>
 
       <div className="tags">
-        {src.synthetic === true && <span className="tag">Synthetic demo record</span>}
         {src.sourceType && <span className="tag tag-plain">{titleCase(src.sourceType)}</span>}
       </div>
 
       <section className="detail-section">
         <h3>Why inspect this source</h3>
         <Reasons source={src} lang={lang} />
+      </section>
+
+      <section className="detail-section" aria-label="Water access impact">
+        <h3>Water access impact</h3>
+        <dl className="facts">
+          <div>
+            <dt>Households served</dt>
+            <dd>{src.households !== null && src.households !== undefined ? fmtInt(src.households) : 'Data not available'}</dd>
+          </div>
+          <div>
+            <dt>Alternative water source available</dt>
+            <dd>
+              {src.alternativeSource !== null && src.alternativeSource !== undefined
+                ? fmtBool(src.alternativeSource)
+                : 'Data not available'}
+            </dd>
+          </div>
+          <div>
+            <dt>Reported water-supply problem</dt>
+            <dd>
+              {src.reportedProblem ? titleCase(src.reportedProblem) : 'Data not available'}
+            </dd>
+          </div>
+        </dl>
+        <p className="hint">
+          Inspection priority indicates which sources may need attention first. Community impact indicates how many people may depend on them.
+        </p>
       </section>
 
       {state?.status === 'loading' && <Loading label="Loading full detail…" />}

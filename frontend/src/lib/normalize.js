@@ -97,6 +97,8 @@ export function normalizeSource(raw) {
     sourceType: str(raw.source_type),
     pumpDepthM: num(pick([raw, pr], ['pump_depth_m'])),
     households: num(raw.households),
+    alternativeSource: bool(pick([raw, pr], ['alternative_source', 'alternative_source_available', 'has_alternative_source'])),
+    reportedProblem: str(pick([raw, pr], ['reported_problem', 'reported_water_problem', 'water_supply_problem', 'problem_reported'])),
     installedYear: num(raw.installed_year),
   };
 }

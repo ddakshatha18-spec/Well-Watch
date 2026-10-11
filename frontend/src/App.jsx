@@ -8,6 +8,7 @@ import ReportForm from './components/ReportForm.jsx';
 import OverviewDashboard from './components/OverviewDashboard.jsx';
 import Methodology from './components/Methodology.jsx';
 import ProblemImpact from './components/ProblemImpact.jsx';
+import InspectionPlanner from './components/InspectionPlanner.jsx';
 import { Empty, ErrorBox, Loading } from './components/States.jsx';
 import { useSources } from './hooks/useSources.js';
 import { useSourceDetail } from './hooks/useSourceDetail.js';
@@ -168,6 +169,11 @@ export default function App() {
 
           <main className="layout" data-view={view} id="main">
             <section className="col-list" aria-label="Ranked inspection list">
+              <InspectionPlanner
+                items={src.items}
+                onSelect={select}
+                selectedId={selected?.id ?? null}
+              />
               <Filters
                 districts={districts}
                 filters={filters}

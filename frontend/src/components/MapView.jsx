@@ -128,7 +128,9 @@ export default function MapView({ items, selectedId, onSelect }) {
             .setLngLat(coords)
             .setHTML(`
               <div style="font-family:sans-serif;padding:2px 4px;">
-                <strong style="color:#2B1B16;font-size:13px;">${props.name}</strong>
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                  <strong style="color:#2B1B16;font-size:13px;">${props.name}</strong>
+                </div>
                 <div style="font-size:11px;color:#6B4F45;">${props.district} · ${props.id}</div>
                 <div style="margin-top:4px;font-size:11px;font-weight:bold;color:${props.level === 'High' ? '#8A2D1C' : '#513229'};">
                   Priority: ${props.level}${scoreText}

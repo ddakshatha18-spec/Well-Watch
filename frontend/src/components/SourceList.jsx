@@ -99,7 +99,9 @@ export default function SourceList({
               </span>
               <span className="source-main">
                 <span className="source-top">
-                  <span className="source-name">{displayName}</span>
+                  <span className="source-name-wrap">
+                    <span className="source-name">{displayName}</span>
+                  </span>
                   <LevelBadge level={s.level} score={s.score} />
                 </span>
                 <span className="source-meta">

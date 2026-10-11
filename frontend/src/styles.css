@@ -353,6 +353,121 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding-right: 4px;
 }
 
+/* Inspection Planner */
+.inspection-planner {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: 12px;
+}
+.planner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.planner-title {
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+.planner-subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+}
+.planner-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.planner-capacity-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.planner-input {
+  width: 58px;
+  min-height: 32px;
+  padding: 3px 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1.5px solid var(--brown);
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+  text-align: center;
+  box-sizing: border-box;
+}
+.planner-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.planner-item {
+  margin: 0;
+}
+.planner-item-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.planner-item-btn:hover {
+  background: #FFFFFF;
+  border-color: var(--brown);
+}
+.planner-item-btn.is-selected {
+  border: 2px solid var(--brown);
+  background: #FFFFFF;
+  box-shadow: var(--shadow-sm);
+}
+.planner-rank {
+  font: 700 1.15rem/1 var(--display);
+  color: var(--brown);
+  min-width: 26px;
+}
+.planner-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.planner-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.planner-name {
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.planner-meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.planner-badge {
+  flex-shrink: 0;
+}
+
 /* Filters */
 .filters {
   background: var(--paper);
