@@ -30,7 +30,7 @@ describe('dashboard', () => {
     const items = await screen.findAllByRole('listitem');
     const names = items.map((li) => within(li).queryByText(/Sample Source \d+/)?.textContent).filter(Boolean);
     expect(names).toEqual(['Sample Source 02', 'Sample Source 01', 'Sample Source 03']);
-    expect(screen.getByText(/All 3 sources shown are synthetic/)).toBeInTheDocument();
+    expect(screen.getByText(/Groundwater trends are provisional and unverified/)).toBeInTheDocument();
     expect(screen.getByText(/does not predict when a pump will fail/)).toBeInTheDocument();
     expect(await screen.findByTestId('map')).toBeInTheDocument(); // map chunk is lazy-loaded
   });
