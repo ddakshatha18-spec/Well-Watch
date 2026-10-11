@@ -1,205 +1,259 @@
-# WellWatch — Water Source Inspection Prioritization
+# WellWatch
 
-## Overview
+### From groundwater observations to actionable water-source inspections
 
-WellWatch is a web-based decision-support platform designed to help field teams prioritize inspections of village water sources. It organizes water-source information into a ranked dashboard, enabling teams to identify which sources should receive attention first based on available inspection-priority scores, contributing factors, and groundwater trend information.
+**WellWatch** is an AWS-backed decision-support platform for planning inspections of rural water infrastructure in Bihar, India. It combines historical groundwater-monitoring evidence, source-level information, explainable inspection-priority scores, an interactive map, and a capacity-aware weekly inspection planner.
 
-The platform combines an interactive map, source-level details, filtering capabilities, and a report-submission interface in one dashboard. Its goal is to make inspection planning more organized, transparent, and data-driven.
+**The question WellWatch answers:** *When field teams cannot inspect every water source, which sources should they examine first, and why?*
 
-**WellWatch is an inspection-prioritization tool, not a pump-failure prediction system.** Its priority scores are heuristics intended to support inspection planning, not verified probabilities of equipment failure.
+> **Demonstration and data-integrity notice:** The current prototype uses **24 synthetic water-source records across 22 Bihar districts**. Their identities and locations are illustrative, **not verified individual handpumps**. Historical groundwater observations originate from government monitoring datasets; derived trends and source-to-station associations remain provisional and require validation. WellWatch does **not** predict pump failures, certify drinking-water safety, or establish a probability that a pump will fail.
 
-The current demonstration uses synthetic source records and provisional groundwater trends. These limitations are communicated throughout the application.
+---
 
-## Problem Statement
+## 1. The problem
 
-Village water sources require regular monitoring and inspection, but field teams may have limited time and resources to visit every source at once. Without an organized view of source information and inspection priorities, deciding where to focus attention first can be difficult.
+Rural water infrastructure teams must make inspection decisions with limited staff, travel time, and incomplete information. Regional groundwater observations may exist, while individual water-source conditions and community reports are recorded separately or remain unavailable. A map alone does not tell a field officer where to start.
 
-WellWatch addresses this challenge by bringing source records, inspection-priority rankings, groundwater trend information, and field reports into a unified interface.
+WellWatch addresses this operational gap: it organizes available evidence into **transparent inspection priorities**, lets an officer choose how many sites can be visited, and produces an exportable shortlist for field planning. Its purpose is to **support**, not replace, human judgment.
 
-## Proposed Solution
+## 2. What the prototype demonstrates
 
-WellWatch provides a centralized dashboard that allows users to:
+| Capability | How it helps |
+| --- | --- |
+| **Inspection-priority dashboard** | Displays source scores, categories, and plain-language reasons returned by the backend. |
+| **Weekly inspection planner** | Selects the top *N* scored sources for a chosen inspection capacity, using backend scores rather than recalculating them in the browser. |
+| **Export inspection plan** | Downloads a CSV shortlist for field coordination; this is a proposed list, not an assigned or optimized driving route. |
+| **Interactive Bihar map** | Displays synthetic source locations and color-coded priorities; selecting a marker opens the relevant source details. |
+| **Source evidence and explanations** | Shows available groundwater trends, source-to-station information, and scoring factors, while identifying missing fields. |
+| **Water Access Impact** | Separates community-dependence information from technical inspection priority; missing household or alternative-source information is displayed as unavailable. |
+| **Search and filtering** | Lets users explore sources by district, source type, priority, and search text where supported by the interface. |
+| **Field-observation interface** | Provides a form for reporting source conditions. Successful persistence and score updates depend on backend authorization and must be tested end to end. |
 
-- View water sources ranked by inspection priority.
-- Identify High, Medium, and Low priority sources.
-- Understand the reasons and factors contributing to each available priority score.
-- Locate sources on an interactive map.
-- Examine source-specific information and groundwater trends.
-- Filter sources by priority, district, and text search.
-- Submit reports through a structured form.
-- Review recent reports and relevant source information when provided by the backend.
+**Example decision:** If a district engineer has capacity for five visits, the planner takes the five highest-scored eligible sources from the API response, displays their reasons, and exports a shortlist. It does not invent field reports, population counts, or new risk scores.
 
-The interface displays missing scores, priority levels, or reasons as unavailable rather than generating unsupported information.
+## 3. Data sources and provenance
 
-## Key Features
+WellWatch deliberately separates **observed groundwater data** from **synthetic source-level demonstration data**.
 
-### 1. Inspection-Priority Dashboard
+| Data layer | Origin | Current interpretation |
+| --- | --- | --- |
+| Groundwater observations | Government groundwater-monitoring CSV datasets, including CGWB and Bihar monitoring records | Historical observations used as input to preprocessing and trend analysis. |
+| Monitoring-station trends | Python cleaning, aggregation, and statistical processing | **388 station trend records** were prepared in the project pipeline. Derived slope/significance results are provisional; measurement-reference conventions need verification. |
+| Source-to-station associations | Spatial matching of demonstration source locations to monitoring stations | Contextual regional evidence, **not** a direct water-level measurement at a village handpump. |
+| Village water sources | `sources_seed.csv` | **24 synthetic** source identities/locations; useful for testing the workflow, not a verified rural asset registry. |
+| Source trend mappings | `source_trends.csv` | **24** synthetic source-to-station mapping records, linked by source ID. |
+| Priority scores and explanations | Backend scoring logic, exposed by the REST API | Inspection-priority heuristics, **not** failure probabilities. The available factors depend on the actual backend data. |
+| Community impact / field observations | Backend records when supplied | Missing households served, alternative-source information, and report history are not assumed or fabricated. |
 
-Displays available water sources with their priority levels, scores, and plain-language explanations. This helps field teams organize inspection visits based on the information currently available.
+### Data processing
 
-### 2. Interactive Water Source Map
+1. Obtain and inspect government groundwater CSV exports.
+2. Validate records and standardize usable measurements and timestamps.
+3. Aggregate observations and compute provisional station-level trends using Python, including Sen's slope and Mann–Kendall significance testing where applicable.
+4. Associate demonstration water sources with nearby monitoring-station evidence.
+5. Prepare cleaned CSV artifacts for backend ingestion and scoring.
+6. Expose source records, scores, and explanations through the AWS API.
 
-Visualizes water sources geographically so users can explore their locations and compare them with the ranked inspection list.
+**Scientific boundary:** A trend derived from a regional monitoring well does not establish that a nearby village pump is failing. Historical groundwater evidence is one contextual input to inspection planning. No claims of verified groundwater depletion, recovery, or drinking-water safety should be inferred from this demonstration.
 
-The application supports MapLibre with Amazon Location Service when configured, and OpenStreetMap as the alternative basemap.
+---
 
-### 3. Detailed Source Information
+## 4. AWS system architecture
 
-Provides a dedicated view for individual sources, including available source facts, inspection-priority explanations, score factors, groundwater trends, and recent reports.
+The application separates the **data preparation and ingestion path** from the **live request and reporting path**. This is important: the Python data-preparation workflow and S3 storage are part of the project, but an automatically triggered S3-to-Lambda ingestion pipeline should be described as operational only after its deployment has been confirmed.
 
-### 4. Search and Filtering
+### Black-and-white architecture diagram
 
-Allows users to narrow the source list using:
+*(Standalone Mermaid source: [`WellWatch_AWS_Architecture.mmd`](./WellWatch_AWS_Architecture.mmd))*
 
-- Inspection priority
-- District
-- Text search
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#ffffff", "primaryTextColor": "#000000", "primaryBorderColor": "#000000", "lineColor": "#000000", "secondaryColor": "#ffffff", "tertiaryColor": "#ffffff", "background": "#ffffff"}}}%%
+flowchart TB
+    subgraph DATA[DATA PREPARATION]
+        GOV[Government groundwater CSVs]
+        PY[Python validation and trend analysis]
+        CSV[Cleaned station trends and source mappings]
+        GOV --> PY --> CSV
+    end
 
-Filtering is performed in the browser, avoiding additional API requests for these operations.
+    subgraph AWS[AWS CLOUD - ap-south-1]
+        S3[Amazon S3 - dataset and artifact storage]
+        ING[Backend import / ingestion process]
+        DB[(Amazon DynamoDB - sources, scores, reports)]
+        APIGW[Amazon API Gateway - REST API]
+        LAMBDA[AWS Lambda - API handlers and scoring integration]
+        AUTH[API authorization for protected operations]
+        CSV --> S3
+        CSV --> ING
+        ING --> DB
+        APIGW --> LAMBDA
+        AUTH -. protects writes .-> APIGW
+        LAMBDA <--> DB
+    end
 
-### 5. Structured Report Submission
+    subgraph WEB[USER EXPERIENCE]
+        UI[React / Vite dashboard]
+        PLAN[Inspection planner, map, source details, CSV export]
+        FORM[Field observation form]
+        UI --> PLAN
+        UI --> FORM
+    end
 
-Provides a form for submitting source-related reports to the backend. The interface includes validation, duplicate-submit protection, and error handling to make the submission workflow clearer.
+    UI <-->|GET sources and details| APIGW
+    FORM -->|POST reports - authorized| APIGW
 
-Report submission remains subject to the backend's authentication and authorization configuration.
+    subgraph DEPLOY[DEPLOYMENT AND OPERATIONS]
+        SAM[AWS SAM / CloudFormation - backend IaC]
+        AMP[AWS Amplify Hosting - frontend deployment option]
+        CW[Amazon CloudWatch - Lambda logs if configured]
+    end
 
-### 6. Groundwater Trend Visualization
+    SAM -. deploys .-> APIGW
+    SAM -. deploys .-> LAMBDA
+    AMP -. hosts when deployed .-> UI
+    LAMBDA -. logs .-> CW
 
-Displays available groundwater trend information and associated source-to-station mappings. Provisional data are labelled appropriately so users can distinguish demonstration information from verified observations.
+    classDef monochrome fill:#ffffff,stroke:#000000,color:#000000,stroke-width:1.5px;
+    class GOV,PY,CSV,S3,ING,DB,APIGW,LAMBDA,AUTH,UI,PLAN,FORM,SAM,AMP,CW monochrome;
+    style DATA fill:#ffffff,stroke:#000000,color:#000000
+    style AWS fill:#ffffff,stroke:#000000,color:#000000
+    style WEB fill:#ffffff,stroke:#000000,color:#000000
+    style DEPLOY fill:#ffffff,stroke:#000000,color:#000000
+```
 
-### 7. Transparent and Responsible Data Presentation
+**Diagram conventions:** Solid arrows indicate data or request flow. Dashed arrows show supporting infrastructure, optional hosting, security, or observability relationships. The **backend import/ingestion process** is deliberately generic: verify with the backend owner whether it currently runs as an S3-triggered Lambda, a manual import, or another job before changing this diagram to claim automation.
 
-WellWatch avoids presenting unavailable information as fact. Missing scores, levels, and reasons are identified as not provided or not scored.
+### AWS services and their responsibilities
 
-The platform also distinguishes inspection-priority heuristics from verified failure predictions.
+| AWS service | Role in WellWatch | Evidence to show in a demo |
+| --- | --- | --- |
+| **Amazon S3** | Stores uploaded groundwater CSVs and/or deployment artifacts. | The project's S3 bucket and its actual objects. |
+| **Amazon API Gateway** | Exposes the REST API consumed by the React dashboard. | The deployed `/sources` and `/sources/{source_id}` routes. |
+| **AWS Lambda** | Runs API handlers and connects application logic with data and scoring. | Deployed functions, their integrations, and a recent invocation. |
+| **Amazon DynamoDB** | Stores backend operational data, including source records and related records as implemented. | Actual table names and a redacted sample item. |
+| **AWS SAM / CloudFormation** | Defines and deploys backend resources as infrastructure as code. | The SAM template and deployed CloudFormation stack. |
+| **Amazon CloudWatch** | Supports Lambda execution logs and operational debugging when configured. | Logs corresponding to a test API request. |
+| **AWS Amplify Hosting** | Can build and host the React frontend from GitHub. | A live Amplify URL **only if deployed**. |
+| **Amazon Location Service** | Optional mapping integration; the interface can also use an OpenStreetMap basemap. | Map configuration, if the AWS mapping integration is enabled. |
 
-## System Architecture
+### Live request flow
 
-The application follows a frontend-to-backend architecture.
+1. The browser requests `GET /sources` from **API Gateway**.
+2. API Gateway forwards the request to the configured **Lambda** handler.
+3. The handler retrieves available source records, associated evidence, and priority information from **DynamoDB** or the configured backend data layer.
+4. The API returns source data, including available priority scores, levels, reasons, and factors.
+5. The React frontend normalizes the response and renders the dashboard, source details, and map.
+6. The **inspection planner runs in the browser**: it sorts eligible backend scores and selects the top *N* sources. **CSV export also runs in the browser.** These two features do not invoke a separate AWS planning service.
 
-1. **Frontend:** A React and Vite web application presents the dashboard, map, filters, source details, and report form.
-2. **REST API:** The frontend communicates with backend endpoints to retrieve source information, request source details, and submit reports.
-3. **Backend services:** API Gateway and the configured backend integrations process supported requests and apply the relevant access controls.
-4. **Data and prioritization logic:** Source records, groundwater trend mappings, and inspection-priority information supply the data displayed by the application.
-5. **Hosting:** AWS Amplify Hosting can serve the production frontend from the GitHub repository.
+### Field-report flow
 
-### API Endpoints
+1. A user completes the field-observation form.
+2. The frontend sends an authorized `POST /reports` request through API Gateway.
+3. Backend validation and authorization determine whether the report can be accepted.
+4. Persistence and priority recalculation should be presented as **verified live behavior only after a successful authenticated submission and follow-up score check**.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/sources` | Retrieve the available water-source records and associated information. |
-| `GET` | `/sources/{source_id}` | Retrieve details for a specific source. |
-| `POST` | `/reports` | Submit a source-related report, subject to backend authorization. |
+This distinction matters: the presence of a report form or API route alone does not prove that a submitted report changed the score.
 
-The source-list response includes a count and a collection of source records. The frontend normalizes API responses before displaying them.
+## 5. API contract
 
-## Technology Stack
+**AWS region:** `ap-south-1` (Mumbai)  
+**API base URL:** `https://e95a0mqwd6.execute-api.ap-south-1.amazonaws.com/Prod/`
 
-| Technology | Purpose |
-|---|---|
-| React | Component-based user interface |
-| Vite | Frontend development server and production build |
-| JavaScript | Application logic and API integration |
-| MapLibre | Interactive map rendering |
-| OpenStreetMap | Alternative basemap |
-| Amazon Location Service | Optional mapping service |
-| REST API | Communication between frontend and backend |
-| Amazon API Gateway | API routing and access-control integration |
-| AWS Amplify Hosting | Frontend deployment and hosting |
-| Git and GitHub | Version control and source-code management |
+| Method | Route | Purpose |
+| --- | --- | --- |
+| `GET` | `/sources` | Retrieve source collection and associated priority data. |
+| `GET` | `/sources/{source_id}` | Retrieve details for a single source. |
+| `POST` | `/reports` | Submit a source-related observation, subject to authorization. |
 
-## Installation and Local Setup
+The source-list response is structured around a `count` and `sources` array. A source may contain fields such as `source_id`, `village`, `district`, coordinates, `synthetic`, groundwater-mapping fields, and a nested `priority` object with `score`, `level`, `reasons`, `factors`, and `data_completeness`. Optional and absent fields must be handled safely.
+
+**Authentication:** The API has used Bearer-token authorization. CORS and authentication are separate: a browser receiving a readable `401 Unauthorized` response is not evidence of a CORS failure. Do not publish shared tokens or put them in `VITE_` variables. Confirm the current authorization policy for each route before a public demo.
+
+## 6. Technology stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React, Vite, JavaScript |
+| Maps | MapLibre; OpenStreetMap basemap; optional Amazon Location Service |
+| API | Amazon API Gateway, AWS Lambda |
+| Operational storage | Amazon DynamoDB |
+| Dataset / artifact storage | Amazon S3 |
+| Data processing | Python, CSV-based validation and statistical trend analysis |
+| Deployment | AWS SAM / CloudFormation for backend; AWS Amplify Hosting supported for frontend |
+| Version control | Git, GitHub |
+
+## 7. Run locally
 
 ### Prerequisites
 
-- Node.js 18 or later
+- Node.js 18 or newer
 - npm
 - Git
-
-### Run the Application
-
-Clone the repository and enter the frontend directory:
 
 ```bash
 git clone https://github.com/ddakshatha18-spec/Well-Watch.git
 cd Well-Watch/frontend
 npm install
-```
-
-Optionally, create a local environment configuration:
-
-```bash
-cp .env.example .env.local
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Open the local URL displayed by Vite, usually:
+Open the local address printed by Vite, commonly `http://localhost:5173`.
 
-http://localhost:5173
+If the repository includes `frontend/.env.example`, copy it to `.env.local` and adjust only the configuration values needed for your environment. Never commit secrets.
 
-### Run Tests and Build
+### Frontend environment variables
 
-Run these commands from the `frontend/` directory:
+| Variable | Purpose |
+| --- | --- |
+| `VITE_API_BASE_URL` | Backend API base URL. |
+| `VITE_API_PROXY_TARGET` | Development proxy target, if used. |
+| `VITE_LOCATION_API_KEY` | Optional browser-usable mapping key, subject to appropriate restrictions. |
+| `VITE_LOCATION_REGION` | AWS region for the optional mapping integration. |
+
+**Security note:** `VITE_` values are exposed to the browser bundle. Never put Bearer secrets, AWS credentials, or private API keys there.
+
+### Tests and production build
+
+Run from `frontend/`:
 
 ```bash
 npm test
 npm run build
 ```
 
-The build command generates the production assets in `frontend/dist` when executed from the repository root, or `dist` when executed inside `frontend/`.
+The production frontend output is generated in `frontend/dist/`. Automated tests do not replace end-to-end checks against the deployed AWS API.
 
-## Environment Configuration
+## 8. Deployment
 
-The frontend supports the following public configuration variables:
+### Backend
 
-| Variable | Purpose |
-|---|---|
-| `VITE_API_BASE_URL` | Base URL of the backend API |
-| `VITE_API_PROXY_TARGET` | Target URL for the development proxy |
-| `VITE_LOCATION_API_KEY` | Optional Amazon Location Service API key |
-| `VITE_LOCATION_REGION` | AWS region for the mapping service |
+The backend uses AWS serverless resources and is described as managed through AWS SAM / CloudFormation. Use the backend repository's actual SAM template and deployment procedure for infrastructure changes; this frontend README does not assume a particular stack name or deploy command.
 
-The API base URL defaults to the team's configured deployed API. The mapping configuration can fall back to OpenStreetMap.
+### Frontend
 
-**Security:** Never store Bearer tokens, AWS access keys, AWS secret keys, or other confidential credentials in frontend source code or `VITE_` environment variables. Values prefixed with `VITE_` can be included in the public browser bundle.
+1. Push reviewed frontend changes to GitHub.
+2. In AWS Amplify, connect the repository and intended branch.
+3. Verify the build settings in `amplify.yml` and the `frontend/` application root.
+4. Set the necessary **public** frontend configuration variables.
+5. Deploy, then verify API requests, source selection, map rendering, and CSV export from the hosted URL.
+6. Test authorized report submission separately, if enabled for the demo.
 
-## Security and Authentication
+Deploying the frontend does not redeploy the backend.
 
-Protected API routes use Bearer-token authorization according to the current backend configuration. The frontend does not embed a shared secret in its source code.
+## 9. Repository layout
 
-For a public deployment, report submission should use an agreed authentication model and appropriate validation and abuse protections. Options include a controlled demonstration workflow with suitable API throttling or an authenticated solution using Amazon Cognito and a JWT authorizer.
-
-API Gateway CORS settings must also permit the intended deployed frontend origin and required request headers.
-
-## Deployment with AWS Amplify
-
-1. Push the project to GitHub.
-2. Open the AWS Amplify Console.
-3. Connect the GitHub repository and select the `main` branch.
-4. Verify that the build configuration uses `amplify.yml` and the frontend application root.
-5. Configure required public environment variables.
-6. Deploy the application and wait for the build to complete.
-7. Test the hosted dashboard and its connection to the backend API.
-
-Frontend hosting and backend deployment are separate operations. Deploying the frontend does not automatically deploy or modify the backend API.
-
-## Project Structure
+The following reflects the documented project organization; verify paths against the current GitHub branch before treating them as authoritative.
 
 ```text
 Well-Watch/
-├── amplify.yml
 ├── README.md
+├── amplify.yml
 ├── frontend/
 │   ├── src/
-│   │   ├── api/          # API client and error handling
-│   │   ├── lib/          # Data normalization and validation
-│   │   ├── hooks/        # Source data and detail hooks
-│   │   ├── components/   # Dashboard and interface components
+│   │   ├── api/          # API requests and error handling
+│   │   ├── lib/          # Normalization and validation
+│   │   ├── hooks/        # Source and detail data hooks
+│   │   ├── components/   # Dashboard and map components
 │   │   └── test/         # Automated tests
 │   ├── .env.example
 │   └── package.json
@@ -211,39 +265,41 @@ Well-Watch/
     └── source_trends.csv
 ```
 
-## Design System
+## 10. Responsible use and current limitations
 
-The interface uses an earthy, accessible visual identity intended to communicate water-source monitoring and field operations.
+- **Synthetic asset registry:** The 24 sample sources are not a verified Bihar water-infrastructure inventory. Display names such as *Sample Source 21* are presentation labels, not confirmed village names.
+- **Provisional groundwater interpretation:** Station trend estimates need verification of measurement conventions, coverage, and statistical assumptions before operational use.
+- **Regional versus local evidence:** A nearby monitoring-station trend is not a direct measurement of a handpump's condition.
+- **No failure prediction:** Scores indicate relative inspection priority under the current heuristic; they are not probabilities of pump breakdown.
+- **Incomplete community impact:** Household counts, alternative water availability, and some field observations may be missing. Missing values are **unknown**, not zero.
+- **Not a route optimizer:** The planner selects top-ranked sources based on capacity; it does not calculate road travel times, assign staff, or optimize vehicle routes.
+- **No proven real-world outcomes yet:** Reduced outages, improved water access, and lower travel costs are intended impacts, not measured results from this prototype.
+- **Operational readiness:** Real deployment requires verified source registries, field validation, secure authentication, access controls, monitoring, and an agreed inspection workflow.
 
-| Design Element | Value |
-|---|---|
-| Deep Earth | `#513229` |
-| Warm Milk | `#F4F1E2` |
-| Soft Sky | `#D8EBF9` |
-| Warm Amber | `#E8B979` |
+## 11. Three-minute demonstration path
 
-The typography combines Antonio for condensed display headings, Playfair Display for editorial emphasis, and Source Sans 3 for body text and data.
+| Time | Screen | What to demonstrate |
+| --- | --- | --- |
+| `0:00–0:25` | Inspection Dashboard | The resource-allocation problem and the current sample-source overview. |
+| `0:25–1:00` | Data & Methodology | Government data processing, 388 provisional station trends, and 24 synthetic source mappings. |
+| `1:00–1:45` | AWS architecture diagram | S3 for data/artifacts; API Gateway and Lambda for requests; DynamoDB for records; SAM for deployment. Clearly distinguish optional or unverified integrations. |
+| `1:45–2:20` | Inspection Planner and source details | Change inspection capacity, show backend scores and reasons, export CSV. |
+| `2:20–2:45` | Map and field observation form | Show spatial exploration and the reporting workflow; submit only if the authenticated end-to-end path is confirmed. |
+| `2:45–3:00` | Dashboard | Explain the impact: helping teams decide where to inspect first. |
 
-Priority is not communicated through colour alone. Text labels and additional visual indicators help distinguish the available priority levels.
+### Suggested judge-facing explanation
 
-## Data Limitations
+> “WellWatch connects historical government groundwater observations to an AWS-backed source-prioritization API. Our Python pipeline prepares provisional station trends, while the deployed backend provides source records and explainable inspection scores through API Gateway and Lambda. The React dashboard turns those scores into a capacity-aware inspection plan that can be exported for field use. The 24 individual water sources are transparently synthetic demonstration records; our goal is to validate this workflow with verified source and community data.”
 
-The current demonstration includes synthetic water-source records and provisional groundwater trend mappings. These datasets are not verified field measurements.
+## 12. Future work
 
-- Inspection-priority scores are heuristics for organizing inspections.
-- Scores must not be interpreted as verified pump-failure probabilities.
-- Groundwater trends require appropriate validation before real-world decisions are made.
-- The accuracy of the dashboard depends on the quality and completeness of the underlying data.
-- Real-world deployment requires suitable data validation, operational testing, and security controls.
+- Integrate verified handpump and borewell inventories with validated geocoordinates.
+- Add confirmed community-impact surveys, including households served and alternative water availability.
+- Complete and validate authorized field-report persistence and score-refresh behavior.
+- Introduce officer assignment, inspection outcomes, and a documented resolution workflow.
+- Add road-network routing and offline-friendly field workflows where justified by user testing.
+- Evaluate scoring quality and operational value against real inspection outcomes before scaling.
 
-## Expected Impact
+---
 
-WellWatch aims to make water-source inspection planning more systematic by consolidating source information, inspection priorities, map-based exploration, and field reporting in a single interface.
-
-By presenting the available evidence and its limitations clearly, the platform can support better-organized fieldwork and more transparent inspection decisions.
-
-## Conclusion
-
-WellWatch provides a unified interface for exploring village water sources, understanding inspection priorities, examining available groundwater trends, and submitting source-related reports.
-
-Its central objective is to **help field teams decide which water sources to inspect first using transparent information and clearly communicated data limitations.**
+**WellWatch is a decision-support prototype: government groundwater evidence in, explainable inspection priorities out, and a practical plan for what to inspect next.**

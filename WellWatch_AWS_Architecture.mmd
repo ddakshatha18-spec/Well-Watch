@@ -1,0 +1,52 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#ffffff", "primaryTextColor": "#000000", "primaryBorderColor": "#000000", "lineColor": "#000000", "secondaryColor": "#ffffff", "tertiaryColor": "#ffffff", "background": "#ffffff"}}}%%
+flowchart TB
+    subgraph DATA[DATA PREPARATION]
+        GOV[Government groundwater CSVs]
+        PY[Python validation and trend analysis]
+        CSV[Cleaned station trends and source mappings]
+        GOV --> PY --> CSV
+    end
+
+    subgraph AWS[AWS CLOUD - ap-south-1]
+        S3[Amazon S3 - dataset and artifact storage]
+        ING[Backend import / ingestion process]
+        DB[(Amazon DynamoDB - sources, scores, reports)]
+        APIGW[Amazon API Gateway - REST API]
+        LAMBDA[AWS Lambda - API handlers and scoring integration]
+        AUTH[API authorization for protected operations]
+        CSV --> S3
+        CSV --> ING
+        ING --> DB
+        APIGW --> LAMBDA
+        AUTH -. protects writes .-> APIGW
+        LAMBDA <--> DB
+    end
+
+    subgraph WEB[USER EXPERIENCE]
+        UI[React / Vite dashboard]
+        PLAN[Inspection planner, map, source details, CSV export]
+        FORM[Field observation form]
+        UI --> PLAN
+        UI --> FORM
+    end
+
+    UI <-->|GET sources and details| APIGW
+    FORM -->|POST reports - authorized| APIGW
+
+    subgraph DEPLOY[DEPLOYMENT AND OPERATIONS]
+        SAM[AWS SAM / CloudFormation - backend IaC]
+        AMP[AWS Amplify Hosting - frontend deployment option]
+        CW[Amazon CloudWatch - Lambda logs if configured]
+    end
+
+    SAM -. deploys .-> APIGW
+    SAM -. deploys .-> LAMBDA
+    AMP -. hosts when deployed .-> UI
+    LAMBDA -. logs .-> CW
+
+    classDef monochrome fill:#ffffff,stroke:#000000,color:#000000,stroke-width:1.5px;
+    class GOV,PY,CSV,S3,ING,DB,APIGW,LAMBDA,AUTH,UI,PLAN,FORM,SAM,AMP,CW monochrome;
+    style DATA fill:#ffffff,stroke:#000000,color:#000000
+    style AWS fill:#ffffff,stroke:#000000,color:#000000
+    style WEB fill:#ffffff,stroke:#000000,color:#000000
+    style DEPLOY fill:#ffffff,stroke:#000000,color:#000000
