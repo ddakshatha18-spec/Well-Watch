@@ -7,7 +7,6 @@ import SourceDetail from './components/SourceDetail.jsx';
 import ReportForm from './components/ReportForm.jsx';
 import OverviewDashboard from './components/OverviewDashboard.jsx';
 import Methodology from './components/Methodology.jsx';
-import ProblemImpact from './components/ProblemImpact.jsx';
 import InspectionPlanner from './components/InspectionPlanner.jsx';
 import { Empty, ErrorBox, Loading } from './components/States.jsx';
 import { useSources } from './hooks/useSources.js';
@@ -107,12 +106,6 @@ export default function App() {
       mainContent = (
         <div className="wrap">
           <Methodology />
-        </div>
-      );
-    } else if (activeTab === 'problem') {
-      mainContent = (
-        <div className="wrap">
-          <ProblemImpact />
         </div>
       );
     } else if (activeTab === 'map') {

@@ -61,13 +61,6 @@ export default function Header({
             >
               Data & Methodology
             </button>
-            <button
-              type="button"
-              className={`nav-tab ${activeTab === 'problem' ? 'is-active' : ''}`}
-              onClick={() => onTabChange('problem')}
-            >
-              Problem & Impact
-            </button>
           </div>
         </nav>
       )}

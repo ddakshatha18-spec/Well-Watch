@@ -31,16 +31,6 @@ describe('navigation and view switching', () => {
     expect(screen.getByText(/Not a Water Safety Certification/)).toBeInTheDocument();
   });
 
-  it('switches to Problem & Impact tab and displays operational context', async () => {
-    render(<App />);
-    await screen.findByText('Sample Source 02');
-
-    await userEvent.click(screen.getByRole('button', { name: 'Problem & Impact' }));
-    expect(await screen.findByText('Problem Statement & Operational Impact')).toBeInTheDocument();
-    expect(screen.getByText(/Reactive Maintenance Leaves Villages Stranded/)).toBeInTheDocument();
-    expect(screen.getByText(/District Water Engineer/)).toBeInTheDocument();
-  });
-
   it('toggles between Card and Table view modes on Dashboard', async () => {
     render(<App />);
     await screen.findByText('Sample Source 02');
