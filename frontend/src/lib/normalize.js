@@ -1,6 +1,7 @@
 // Turns whatever the API returns into predictable shapes for the UI.
 // Rules: never invent values, never derive a risk level, keep "missing" as null.
 import { ApiError } from '../api/errors.js';
+import { formatSourceName } from './format.js';
 
 export const LEVELS = ['High', 'Medium', 'Low'];
 
@@ -235,7 +236,8 @@ export function filterSources(items, { district, level, query, sourceType, sortB
     if (district && s.district !== district) return false;
     if (level === 'Unscored' ? s.level !== null : level && s.level !== level) return false;
     if (sourceType && s.sourceType !== sourceType) return false;
-    if (q && !`${s.village ?? ''} ${s.id} ${s.district ?? ''} ${s.sourceType ?? ''}`.toLowerCase().includes(q)) return false;
+    const displayName = formatSourceName(s.village ?? s.id);
+    if (q && !`${s.village ?? ''} ${displayName} ${s.id} ${s.district ?? ''} ${s.sourceType ?? ''}`.toLowerCase().includes(q)) return false;
     return true;
   });
 
@@ -251,10 +253,10 @@ export function filterSources(items, { district, level, query, sourceType, sortB
       return a.score - b.score;
     }
     if (sortBy === 'village_asc') {
-      return (a.village || a.id).localeCompare(b.village || b.id);
+      return (formatSourceName(a.village || a.id)).localeCompare(formatSourceName(b.village || b.id));
     }
     if (sortBy === 'district_asc') {
-      return (a.district || '').localeCompare(b.district || '') || (a.village || a.id).localeCompare(b.village || b.id);
+      return (a.district || '').localeCompare(b.district || '') || (formatSourceName(a.village || a.id)).localeCompare(formatSourceName(b.village || b.id));
     }
     return 0;
   });

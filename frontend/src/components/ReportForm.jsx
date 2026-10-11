@@ -3,6 +3,7 @@ import { postReport } from '../api/client.js';
 import { todayISO, validateReport, YIELD_LEVELS } from '../lib/validate.js';
 import { ErrorBox } from './States.jsx';
 import LevelBadge from './LevelBadge.jsx';
+import { formatSourceName } from '../lib/format.js';
 
 export default function ReportForm({ sources, initialSourceId, token, onToken, onClose, onSaved }) {
   const [values, setValues] = useState({ sourceId: initialSourceId || '', yieldLevel: '', failureFlag: false, date: todayISO() });
@@ -15,7 +16,7 @@ export default function ReportForm({ sources, initialSourceId, token, onToken, o
   const first = useRef(null);
 
   const knownIds = sources.map((s) => s.id);
-  const sorted = [...sources].sort((a, b) => (a.village ?? a.id).localeCompare(b.village ?? b.id));
+  const sorted = [...sources].sort((a, b) => (formatSourceName(a.village ?? a.id)).localeCompare(formatSourceName(b.village ?? b.id)));
   const before = sources.find((s) => s.id === values.sourceId);
   const set = (patch) => setValues((v) => ({ ...v, ...patch }));
 
@@ -81,7 +82,7 @@ export default function ReportForm({ sources, initialSourceId, token, onToken, o
           <div className="drawer-body">
             <div className="state state-success" role="status">
               <h3>Report saved</h3>
-              <p>The server confirmed your report for <strong>{before?.village ?? values.sourceId}</strong>.</p>
+              <p>The server confirmed your report for <strong>{formatSourceName(before?.village ?? values.sourceId)}</strong>.</p>
               {result.level || result.score !== null ? (
                 <p className="change">
                   Priority now: <LevelBadge level={result.level} score={result.score} />
@@ -114,7 +115,7 @@ export default function ReportForm({ sources, initialSourceId, token, onToken, o
                 >
                   <option value="">Choose a source…</option>
                   {sorted.map((s) => (
-                    <option key={s.id} value={s.id}>{s.village ?? s.id} — {s.id}</option>
+                    <option key={s.id} value={s.id}>{formatSourceName(s.village ?? s.id)} — {s.id}</option>
                   ))}
                 </select>
                 {errors.sourceId && <p className="field-error" id="r-source-err">{errors.sourceId}</p>}

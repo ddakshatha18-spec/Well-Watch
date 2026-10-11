@@ -1,5 +1,5 @@
 import LevelBadge from './LevelBadge.jsx';
-import { districtName, fmtNum, titleCase } from '../lib/format.js';
+import { districtName, fmtNum, formatSourceName, titleCase } from '../lib/format.js';
 
 export function reasonsFor(source, lang) {
   if (lang === 'local' && source.reasonsLocal?.length) return { list: source.reasonsLocal, fallback: false };
@@ -35,6 +35,7 @@ export default function SourceList({
               const rank = rankById.get(s.id);
               const { list } = reasonsFor(s, lang);
               const selected = s.id === selectedId;
+              const displayName = formatSourceName(s.village ?? s.id);
               return (
                 <tr
                   key={s.id}
@@ -47,8 +48,7 @@ export default function SourceList({
                   </td>
                   <td className="mono">{s.id}</td>
                   <td>
-                    <strong>{s.village ?? s.id}</strong>
-                    {s.synthetic === true && <span className="tag tag-sm">Synthetic</span>}
+                    <strong>{displayName}</strong>
                   </td>
                   <td>{districtName(s.district)}</td>
                   <td>{s.sourceType ? titleCase(s.sourceType) : '—'}</td>
@@ -85,6 +85,7 @@ export default function SourceList({
         const rank = rankById.get(s.id);
         const { list, fallback } = reasonsFor(s, lang);
         const selected = s.id === selectedId;
+        const displayName = formatSourceName(s.village ?? s.id);
         return (
           <li key={s.id}>
             <button
@@ -98,13 +99,12 @@ export default function SourceList({
               </span>
               <span className="source-main">
                 <span className="source-top">
-                  <span className="source-name">{s.village ?? s.id}</span>
+                  <span className="source-name">{displayName}</span>
                   <LevelBadge level={s.level} score={s.score} />
                 </span>
                 <span className="source-meta">
                   {districtName(s.district)} · {s.sourceType ? titleCase(s.sourceType) : 'Source type not provided'} ·{' '}
                   <span className="mono">{s.id}</span>
-                  {s.synthetic === true && <span className="tag">Synthetic</span>}
                 </span>
                 {list.length > 0 ? (
                   <span className="source-reasons">

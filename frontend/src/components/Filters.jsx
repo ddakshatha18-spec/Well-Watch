@@ -9,6 +9,7 @@ export default function Filters({
   total,
   viewMode = 'card',
   onViewModeChange,
+  onExportCsv,
 }) {
   const set = (patch) => onChange({ ...filters, ...patch });
   const chips = [
@@ -24,24 +25,36 @@ export default function Filters({
     <section className="filters" aria-label="Filter sources">
       <div className="filters-header">
         <h3 className="filters-title">Filter Inspection Queue</h3>
-        {onViewModeChange && (
-          <div className="view-mode-toggle" role="group" aria-label="Layout view">
+        <div className="filters-actions">
+          {onExportCsv && (
             <button
               type="button"
-              className={`view-mode-btn ${viewMode === 'card' ? 'active' : ''}`}
-              onClick={() => onViewModeChange('card')}
+              className="export-btn"
+              onClick={onExportCsv}
+              title="Export inspection queue as CSV"
             >
-              Cards
+              Export CSV
             </button>
-            <button
-              type="button"
-              className={`view-mode-btn ${viewMode === 'table' ? 'active' : ''}`}
-              onClick={() => onViewModeChange('table')}
-            >
-              Table
-            </button>
-          </div>
-        )}
+          )}
+          {onViewModeChange && (
+            <div className="view-mode-toggle" role="group" aria-label="Layout view">
+              <button
+                type="button"
+                className={`view-mode-btn ${viewMode === 'card' ? 'active' : ''}`}
+                onClick={() => onViewModeChange('card')}
+              >
+                Cards
+              </button>
+              <button
+                type="button"
+                className={`view-mode-btn ${viewMode === 'table' ? 'active' : ''}`}
+                onClick={() => onViewModeChange('table')}
+              >
+                Table
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {chips.length > 0 && (

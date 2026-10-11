@@ -12,6 +12,7 @@ import { Empty, ErrorBox, Loading } from './components/States.jsx';
 import { useSources } from './hooks/useSources.js';
 import { useSourceDetail } from './hooks/useSourceDetail.js';
 import { countLevels, filterSources, rankSources } from './lib/normalize.js';
+import { exportSourcesToCsv } from './lib/export.js';
 
 // The map library is large, so it loads in its own chunk
 const MapView = lazy(() => import('./components/MapView.jsx'));
@@ -124,6 +125,7 @@ export default function App() {
               counts={counts}
               shown={visible.length}
               total={src.items.length}
+              onExportCsv={() => exportSourcesToCsv(visible)}
             />
             <div className="full-map-layout">
               <div className="full-map-container">
@@ -175,6 +177,7 @@ export default function App() {
                 total={src.items.length}
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
+                onExportCsv={() => exportSourcesToCsv(visible)}
               />
               {src.skipped > 0 && (
                 <p className="hint">

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LOCATION } from '../config.js';
-import { districtName } from '../lib/format.js';
+import { districtName, formatSourceName } from '../lib/format.js';
 
 const COLOR = [
   'match',
@@ -177,7 +177,8 @@ export default function MapView({ items, selectedId, onSelect }) {
           id: s.id,
           level: s.level ?? 'none',
           score: s.score,
-          name: s.village ?? s.id,
+          name: formatSourceName(s.village ?? s.id),
+          synthetic: s.synthetic === true,
           district: districtName(s.district),
           reason: s.reasons?.[0] || '',
         },

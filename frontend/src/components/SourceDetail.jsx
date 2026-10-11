@@ -1,7 +1,7 @@
 import LevelBadge from './LevelBadge.jsx';
 import { ErrorBox, Loading } from './States.jsx';
 import { reasonsFor } from './SourceList.jsx';
-import { dash, districtName, fmtBool, fmtInt, fmtNum, titleCase } from '../lib/format.js';
+import { dash, districtName, fmtBool, fmtInt, fmtNum, formatSourceName, titleCase } from '../lib/format.js';
 
 function Reasons({ source, lang }) {
   const { list, fallback } = reasonsFor(source, lang);
@@ -73,7 +73,7 @@ export default function SourceDetail({ summary, state, lang, onRetry, onReport, 
           <p className="eyebrow">
             {districtName(src.district)} · <span className="mono">{src.id}</span>
           </p>
-          <h2>{src.village ?? src.id}</h2>
+          <h2>{formatSourceName(src.village ?? src.id)}</h2>
         </div>
         <LevelBadge level={src.level} score={src.score} />
       </header>

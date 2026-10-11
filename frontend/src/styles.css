@@ -364,8 +364,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: grid;
   gap: 12px;
 }
-.filters-header { display: flex; justify-content: space-between; align-items: center; }
+.filters-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .filters-title { margin-bottom: 0; }
+.filters-actions { display: inline-flex; align-items: center; gap: 8px; }
+.export-btn {
+  background: var(--cream);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--brown);
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+.export-btn:hover { background: #FFFFFF; border-color: var(--brown); }
 .view-mode-toggle { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); overflow: hidden; }
 .view-mode-btn { background: var(--cream); border: 0; padding: 4px 10px; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: var(--muted); }
 .view-mode-btn.active { background: var(--brown); color: var(--cream); }
@@ -507,6 +522,13 @@ input[type='search']:focus, input[type='date']:focus, input[type='password']:foc
 .tag-plain { background: transparent; border: 1px solid var(--line-strong); margin-left: 0; color: var(--muted); }
 .tags { display: flex; gap: 8px; margin: 8px 0 4px; flex-wrap: wrap; }
 .tags .tag { margin-left: 0; }
+.source-name-wrap, .detail-title-row { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tag-synthetic {
+  background: var(--sky);
+  color: var(--brown);
+  border: 1px solid var(--line-strong);
+  margin-left: 0;
+}
 
 /* Map Component */
 .map-card {
